@@ -16,6 +16,13 @@ class InitTables < ActiveRecord::Migration[5.1]
       t.string :refresh_status
       t.timestamps
 
+      t.string :refresh_state
+      t.bigint :bytes_received
+      t.bigint :bytes_sent
+      t.datetime :refresh_started_at
+      t.datetime :refresh_finished_at
+      t.datetime :last_successful_refresh_at
+
       t.index %i[tenant_id uid], :unique => true
     end
 
@@ -99,7 +106,8 @@ class InitTables < ActiveRecord::Migration[5.1]
     end
 
     create_table :service_instances do |t|
-      t.references :source, :type => :bigint, :index => true
+      t.references :tenant, :index => true, :null => false, :foreign_key => {:on_delete => :cascade}
+      t.references :source, :type => :bigint, :index => true, :foreign_key => {:on_delete => :cascade}
       t.string     :source_ref, :null => false
       t.string     :name
       t.references :service_offering, :type => :bigint, :index => true
@@ -107,7 +115,6 @@ class InitTables < ActiveRecord::Migration[5.1]
       t.jsonb      :extra
       t.timestamps
       t.datetime   :source_deleted_at, :index => true
-      t.bigint     :tenant_id, :null => false
       t.datetime   :source_created_at
       t.datetime   :archived_at, :index => true
       t.datetime   :resource_timestamp
@@ -119,7 +126,6 @@ class InitTables < ActiveRecord::Migration[5.1]
       t.references :root_service_instance, :index => true, :null => true,
                    :foreign_key => {:on_delete => :nullify, :to_table => 'service_instances'}
       t.index      %i[source_id source_ref], :unique => true
-      t.index      :tenant_id
     end
 
     create_table :service_instance_nodes do |t|
@@ -153,11 +159,13 @@ class InitTables < ActiveRecord::Migration[5.1]
       t.string :source_ref, :null => false
       t.binary :data
       t.timestamps
+      t.datetime :archived_at, :index => true
       t.datetime :last_seen_at, :index => true
     end
 
     create_table :service_offerings do |t|
-      t.references :source, :type => :bigint, :index => true
+      t.references :tenant, :index => true, :null => false, :foreign_key => {:on_delete => :cascade}
+      t.references :source, :index => false, :null => true, :foreign_key => {:on_delete => :cascade}
       t.string     :source_ref
       t.string     :name
       t.text       :description
@@ -165,7 +173,6 @@ class InitTables < ActiveRecord::Migration[5.1]
 
       t.timestamps
       t.datetime   :source_deleted_at, :index => true
-      t.bigint     :tenant_id, :null => false
       t.datetime   :source_created_at
       t.datetime   :archived_at, :index => true
       t.datetime   :resource_timestamp
@@ -179,8 +186,6 @@ class InitTables < ActiveRecord::Migration[5.1]
       t.string     :support_url
       t.references :service_offering_icon, :index => true, :null => true, :foreign_key => {:on_delete => :nullify}
       t.references :service_inventory, :index => true, :null => true, :foreign_key => {:on_delete => :nullify}
-
-      t.index      :tenant_id
     end
 
     create_table :service_offering_nodes do |t|
@@ -210,6 +215,7 @@ class InitTables < ActiveRecord::Migration[5.1]
     end
 
     create_table :service_plans do |t|
+      t.references :tenant, :index => true, :null => false, :foreign_key => {:on_delete => :cascade}
       t.references :source, :index => false, :null => false, :foreign_key => {:on_delete => :cascade}
       t.string :source_ref, :null => false
       t.string :name
@@ -220,7 +226,6 @@ class InitTables < ActiveRecord::Migration[5.1]
       t.timestamps
 
       t.datetime :source_deleted_at, :index => true
-      t.bigint   :tenant_id, :null => false
       t.datetime :source_created_at
       t.jsonb    :create_json_schema
       t.jsonb    :update_json_schema
@@ -321,18 +326,20 @@ class InitTables < ActiveRecord::Migration[5.1]
     end
 
     create_table :tasks do |t|
+      t.references :tenant, :index => true, :null => false
+      t.references :source, :index => true, :null => true, :foreign_key => {:on_delete => :nullify}
       t.string :name
       t.string :status
       t.string :state
       t.jsonb :context
-      t.references :tenant, :index => true, :null => false
+      t.jsonb :result
       t.datetime :completed_at
+      t.datetime :archived_at, :index => true
       t.timestamps
       t.string :target_source_ref, :null => true
       t.string :target_type, :null => true
       t.jsonb :forwardable_headers
 
-      t.references :source, :index => true, :null => true, :foreign_key => {:on_delete => :nullify}
       t.index %i[target_source_ref target_type]
     end
   end

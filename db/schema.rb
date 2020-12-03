@@ -115,6 +115,7 @@ ActiveRecord::Schema.define(version: 0) do
   end
 
   create_table "service_instances", force: :cascade do |t|
+    t.bigint "tenant_id", null: false
     t.bigint "source_id"
     t.string "source_ref", null: false
     t.string "name"
@@ -124,7 +125,6 @@ ActiveRecord::Schema.define(version: 0) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "source_deleted_at"
-    t.bigint "tenant_id", null: false
     t.datetime "source_created_at"
     t.datetime "archived_at"
     t.datetime "resource_timestamp"
@@ -186,7 +186,9 @@ ActiveRecord::Schema.define(version: 0) do
     t.binary "data"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "archived_at"
     t.datetime "last_seen_at"
+    t.index ["archived_at"], name: "index_service_offering_icons_on_archived_at"
     t.index ["last_seen_at"], name: "index_service_offering_icons_on_last_seen_at"
     t.index ["tenant_id"], name: "index_service_offering_icons_on_tenant_id"
   end
@@ -256,6 +258,7 @@ ActiveRecord::Schema.define(version: 0) do
   end
 
   create_table "service_offerings", force: :cascade do |t|
+    t.bigint "tenant_id", null: false
     t.bigint "source_id"
     t.string "source_ref"
     t.string "name"
@@ -264,7 +267,6 @@ ActiveRecord::Schema.define(version: 0) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "source_deleted_at"
-    t.bigint "tenant_id", null: false
     t.datetime "source_created_at"
     t.datetime "archived_at"
     t.datetime "resource_timestamp"
@@ -283,11 +285,11 @@ ActiveRecord::Schema.define(version: 0) do
     t.index ["service_inventory_id"], name: "index_service_offerings_on_service_inventory_id"
     t.index ["service_offering_icon_id"], name: "index_service_offerings_on_service_offering_icon_id"
     t.index ["source_deleted_at"], name: "index_service_offerings_on_source_deleted_at"
-    t.index ["source_id"], name: "index_service_offerings_on_source_id"
     t.index ["tenant_id"], name: "index_service_offerings_on_tenant_id"
   end
 
   create_table "service_plans", force: :cascade do |t|
+    t.bigint "tenant_id", null: false
     t.bigint "source_id", null: false
     t.string "source_ref", null: false
     t.string "name"
@@ -297,7 +299,6 @@ ActiveRecord::Schema.define(version: 0) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.datetime "source_deleted_at"
-    t.bigint "tenant_id", null: false
     t.datetime "source_created_at"
     t.jsonb "create_json_schema"
     t.jsonb "update_json_schema"
@@ -311,6 +312,7 @@ ActiveRecord::Schema.define(version: 0) do
     t.index ["service_offering_id"], name: "index_service_plans_on_service_offering_id"
     t.index ["source_deleted_at"], name: "index_service_plans_on_source_deleted_at"
     t.index ["source_id", "source_ref"], name: "index_service_plans_on_source_id_and_source_ref", unique: true
+    t.index ["tenant_id"], name: "index_service_plans_on_tenant_id"
   end
 
   create_table "sources", force: :cascade do |t|
@@ -320,6 +322,12 @@ ActiveRecord::Schema.define(version: 0) do
     t.string "refresh_status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "refresh_state"
+    t.bigint "bytes_received"
+    t.bigint "bytes_sent"
+    t.datetime "refresh_started_at"
+    t.datetime "refresh_finished_at"
+    t.datetime "last_successful_refresh_at"
     t.index ["tenant_id", "uid"], name: "index_sources_on_tenant_id_and_uid", unique: true
   end
 
@@ -336,18 +344,21 @@ ActiveRecord::Schema.define(version: 0) do
   end
 
   create_table "tasks", force: :cascade do |t|
+    t.bigint "tenant_id", null: false
+    t.bigint "source_id"
     t.string "name"
     t.string "status"
     t.string "state"
     t.jsonb "context"
-    t.bigint "tenant_id", null: false
+    t.jsonb "result"
     t.datetime "completed_at"
+    t.datetime "archived_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "target_source_ref"
     t.string "target_type"
     t.jsonb "forwardable_headers"
-    t.bigint "source_id"
+    t.index ["archived_at"], name: "index_tasks_on_archived_at"
     t.index ["source_id"], name: "index_tasks_on_source_id"
     t.index ["target_source_ref", "target_type"], name: "index_tasks_on_target_source_ref_and_target_type"
     t.index ["tenant_id"], name: "index_tasks_on_tenant_id"
@@ -379,6 +390,8 @@ ActiveRecord::Schema.define(version: 0) do
   add_foreign_key "service_instance_service_credentials", "tenants", on_delete: :cascade
   add_foreign_key "service_instances", "service_instances", column: "root_service_instance_id", on_delete: :nullify
   add_foreign_key "service_instances", "service_inventories", on_delete: :nullify
+  add_foreign_key "service_instances", "sources", on_delete: :cascade
+  add_foreign_key "service_instances", "tenants", on_delete: :cascade
   add_foreign_key "service_inventories", "sources", on_delete: :cascade
   add_foreign_key "service_inventories", "tenants", on_delete: :cascade
   add_foreign_key "service_inventory_tags", "service_inventories", on_delete: :cascade
@@ -402,7 +415,10 @@ ActiveRecord::Schema.define(version: 0) do
   add_foreign_key "service_offering_tags", "tenants", on_delete: :cascade
   add_foreign_key "service_offerings", "service_inventories", on_delete: :nullify
   add_foreign_key "service_offerings", "service_offering_icons", on_delete: :nullify
+  add_foreign_key "service_offerings", "sources", on_delete: :cascade
+  add_foreign_key "service_offerings", "tenants", on_delete: :cascade
   add_foreign_key "service_plans", "sources", on_delete: :cascade
+  add_foreign_key "service_plans", "tenants", on_delete: :cascade
   add_foreign_key "tags", "tenants", on_delete: :cascade
   add_foreign_key "tasks", "sources", on_delete: :nullify
 end

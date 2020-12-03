@@ -2072,12 +2072,6 @@
             "readOnly": true,
             "type": "string"
           },
-          "source_region_id": {
-            "$ref": "#/components/schemas/ID"
-          },
-          "subscription_id": {
-            "$ref": "#/components/schemas/ID"
-          },
           "updated_at": {
             "format": "date-time",
             "readOnly": true,
@@ -2347,12 +2341,6 @@
             "title": "Source reference",
             "type": "string"
           },
-          "source_region_id": {
-            "$ref": "#/components/schemas/ID"
-          },
-          "subscription_id": {
-            "$ref": "#/components/schemas/ID"
-          },
           "support_url": {
             "example": "https://access.redhat.com",
             "readOnly": true,
@@ -2370,6 +2358,11 @@
       "ServiceOfferingIcon": {
         "type": "object",
         "properties": {
+          "archived_at": {
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          },
           "created_at": {
             "format": "date-time",
             "readOnly": true,
@@ -2584,12 +2577,6 @@
             "readOnly": true,
             "type": "string"
           },
-          "source_region_id": {
-            "$ref": "#/components/schemas/ID"
-          },
-          "subscription_id": {
-            "$ref": "#/components/schemas/ID"
-          },
           "update_json_schema": {
             "readOnly": true,
             "type": "string"
@@ -2627,6 +2614,11 @@
       "Source": {
         "type": "object",
         "properties": {
+          "archived_at": {
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          },
           "created_at": {
             "format": "date-time",
             "readOnly": true,
@@ -2636,6 +2628,30 @@
             "$ref": "#/components/schemas/ID"
           },
           "refresh_status": {
+            "type": "string"
+          },
+          "refresh_state": {
+            "type": "string"
+          },
+          "bytes_received": {
+            "type": "integer"
+          },
+          "bytes_sent": {
+            "type": "integer"
+          },
+          "refresh_started_at": {
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          },
+          "refresh_finished_at": {
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          },
+          "last_successful_refresh_at": {
+            "format": "date-time",
+            "readOnly": true,
             "type": "string"
           },
           "uid": {
@@ -2698,6 +2714,11 @@
       "Task": {
         "type": "object",
         "properties": {
+          "archived_at": {
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          },
           "completed_at": {
             "format": "date-time",
             "type": "string"
@@ -2705,6 +2726,11 @@
           "context": {
             "example": "Extra information about this task, e.g. new inventory items created by this task",
             "title": "Context",
+            "type": "object"
+          },
+          "result": {
+            "example": "Result of Task Execution",
+            "title": "Result",
             "type": "object"
           },
           "created_at": {

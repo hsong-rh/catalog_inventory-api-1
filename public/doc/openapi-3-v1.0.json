@@ -2205,6 +2205,11 @@
       "ServiceOfferingIcon": {
         "type": "object",
         "properties": {
+          "archived_at": {
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          },
           "created_at": {
             "format": "date-time",
             "readOnly": true,
@@ -2453,6 +2458,11 @@
       "Source": {
         "type": "object",
         "properties": {
+          "archived_at": {
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          },
           "created_at": {
             "format": "date-time",
             "readOnly": true,
@@ -2462,6 +2472,30 @@
             "$ref": "#/components/schemas/ID"
           },
           "refresh_status": {
+            "type": "string"
+          },
+          "refresh_state": {
+            "type": "string"
+          },
+          "bytes_received": {
+            "type": "integer"
+          },
+          "bytes_sent": {
+            "type": "integer"
+          },
+          "refresh_started_at": {
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          },
+          "refresh_finished_at": {
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          },
+          "last_successful_refresh_at": {
+            "format": "date-time",
+            "readOnly": true,
             "type": "string"
           },
           "uid": {
@@ -2570,6 +2604,11 @@
       "Task": {
         "type": "object",
         "properties": {
+          "archived_at": {
+            "format": "date-time",
+            "readOnly": true,
+            "type": "string"
+          },
           "completed_at": {
             "format": "date-time",
             "type": "string"
@@ -2577,6 +2616,11 @@
           "context": {
             "example": "Extra information about this task, e.g. new inventory items created by this task",
             "title": "Context",
+            "type": "object"
+          },
+          "result": {
+            "example": "Result of Task Execution",
+            "title": "Result",
             "type": "object"
           },
           "created_at": {

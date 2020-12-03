@@ -24,10 +24,17 @@ module Api
 
       def params_for_update
         permitted = api_doc_definition.all_attributes - api_doc_definition.read_only_attributes
+
+        if body_params['result'].present?
+          permitted.delete('result')
+          permitted << {'result'=>{}}
+        end
+
         if body_params['context'].present?
           permitted.delete('context')
           permitted << {'context'=>{}}
         end
+
         permitted << 'source_id'
         body_params.permit(*permitted)
       end
