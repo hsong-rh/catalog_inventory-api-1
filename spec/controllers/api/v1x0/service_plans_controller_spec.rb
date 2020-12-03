@@ -48,20 +48,13 @@ RSpec.describe Api::V1x0::ServicePlansController, :type => :request do
       end
 
       it "publishes a message to the messaging client" do
-        byebug
-        #expect(client).to receive(:publish_topic).with(
-        #  :service => "platform.catalog-inventory.operations-openshift",
-        #  :event   => "ServicePlan.order",
-        #  :payload => {:request_context => headers, :params => {:task_id => kind_of(String), :service_plan_id => service_plan.id.to_s, :order_params => payload}}
-        #)
-
-        post "/api/v1.0/service_plans/#{service_plan.id}/order", :params => payload.to_json, :headers => headers
-        
         expect(client).to receive(:publish_topic).with(
           :service => "platform.catalog-inventory.operations-openshift",
           :event   => "ServicePlan.order",
           :payload => {:request_context => headers, :params => {:task_id => kind_of(String), :service_plan_id => service_plan.id.to_s, :order_params => payload}}
         )
+
+        post "/api/v1.0/service_plans/#{service_plan.id}/order", :params => payload.to_json, :headers => headers
       end
 
       it "returns json with the task id" do

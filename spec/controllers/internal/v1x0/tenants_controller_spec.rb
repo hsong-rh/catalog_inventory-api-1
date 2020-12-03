@@ -4,7 +4,6 @@ RSpec.describe Internal::V1x0::TenantsController, :type => :request do
   let(:headers) { {"CONTENT_TYPE" => "application/json", "x-rh-identity" => identity} }
 
   it "GET an instance" do
-    byebug
     get(internal_v1x0_tenant_url(tenant.id), :headers => headers)
 
     expect(response.status).to eq(200)

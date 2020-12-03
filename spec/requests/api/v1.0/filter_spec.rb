@@ -111,6 +111,5 @@ RSpec.describe("::Insights::API::Common::Filter") do
   context "error cases" do
     it("empty filter")      { expect_failure("filter", "ActionController::UnpermittedParameters: found unpermitted parameter: :filter") }
     it("unknown attribute") { expect_failure("filter[xxx]", "Insights::API::Common::Filter::Error: found unpermitted parameter: xxx") }
-    it("unknown association attribute") { expect_collection_query_failure("container_groups", "filter[containers][xxx]=4", "Insights::API::Common::Filter::Error: found unpermitted parameter: containers.xxx") }
   end
 end
