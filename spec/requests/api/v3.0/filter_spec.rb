@@ -120,7 +120,6 @@ RSpec.describe("::Insights::API::Common::Filter") do
   context "error cases" do
     it("empty filter")      { expect_failure("filter", "ActionController::UnpermittedParameters: found unpermitted parameter: :filter") }
     it("unknown attribute") { expect_failure("filter[xxx]", "Insights::API::Common::Filter::Error: found unpermitted parameter: xxx") }
-    it("unknown association attribute") { expect_collection_query_failure("container_groups", "filter[containers][xxx]=4", "Insights::API::Common::Filter::Error: found unpermitted parameter: containers.xxx") }
   end
 
   context "undocumented attributes" do
@@ -146,33 +145,33 @@ RSpec.describe("::Insights::API::Common::Filter") do
   end
 
   context "tag attributes" do
-    let(:container_node) { ContainerNode.create!(:source => source, :source_ref => "something", :tenant => tenant) }
+    let(:inventory) { ServiceInventory.create!(:source => source, :source_ref => "something", :tenant => tenant) }
     let(:source)         { Source.create!(:tenant => tenant) }
-    let!(:tag_1)         { Tag.create!(:tenant => tenant, :namespace => "test_namespace", :name => "aaa").tap { |i| container_node.tags << i } }
-    let!(:tag_2)         { Tag.create!(:tenant => tenant, :namespace => "test_namespace", :name => "bbb").tap { |i| container_node.tags << i } }
-    let!(:tag_3)         { Tag.create!(:tenant => tenant, :namespace => "test_namespace", :name => "abc").tap { |i| container_node.tags << i } }
-    let!(:tag_4)         { Tag.create!(:tenant => tenant, :namespace => "test_namespace", :name => "xyz").tap { |i| container_node.tags << i } }
-    let!(:tag_5)         { Tag.create!(:tenant => tenant, :namespace => "test_namespace", :name => "def%").tap { |i| container_node.tags << i } }
-    let!(:tag_6)         { Tag.create!(:tenant => tenant, :namespace => "test_namespace", :name => "%def").tap { |i| container_node.tags << i } }
-    let!(:tag_7)         { Tag.create!(:tenant => tenant, :namespace => "test_namespace", :name => "de%f").tap { |i| container_node.tags << i } }
+    let!(:tag_1)         { Tag.create!(:tenant => tenant, :namespace => "test_namespace", :name => "aaa").tap { |i| inventory.tags << i } }
+    let!(:tag_2)         { Tag.create!(:tenant => tenant, :namespace => "test_namespace", :name => "bbb").tap { |i| inventory.tags << i } }
+    let!(:tag_3)         { Tag.create!(:tenant => tenant, :namespace => "test_namespace", :name => "abc").tap { |i| inventory.tags << i } }
+    let!(:tag_4)         { Tag.create!(:tenant => tenant, :namespace => "test_namespace", :name => "xyz").tap { |i| inventory.tags << i } }
+    let!(:tag_5)         { Tag.create!(:tenant => tenant, :namespace => "test_namespace", :name => "def%").tap { |i| inventory.tags << i } }
+    let!(:tag_6)         { Tag.create!(:tenant => tenant, :namespace => "test_namespace", :name => "%def").tap { |i| inventory.tags << i } }
+    let!(:tag_7)         { Tag.create!(:tenant => tenant, :namespace => "test_namespace", :name => "de%f").tap { |i| inventory.tags << i } }
 
-    it("key:eq single without 'eq' key")          { expect_tag_success(container_node, "filter[name]=#{tag_1.name}", tag_1) }
-    it("key:eq array of values without 'eq' key") { expect_tag_success(container_node, "filter[name][]=#{tag_1.name}&filter[name][]=#{tag_2.name}", tag_1, tag_2) }
-    it("key:eq single with 'eq' key")             { expect_tag_success(container_node, "filter[name][eq]=#{tag_1.name}", tag_1) }
-    it("key:eq array of values with 'eq' key")    { expect_tag_success(container_node, "filter[name][eq][]=#{tag_1.name}&filter[name][eq][]=#{tag_2.name}", tag_1, tag_2) }
+    it("key:eq single without 'eq' key")          { expect_tag_success(inventory, "filter[name]=#{tag_1.name}", tag_1) }
+    it("key:eq array of values without 'eq' key") { expect_tag_success(inventory, "filter[name][]=#{tag_1.name}&filter[name][]=#{tag_2.name}", tag_1, tag_2) }
+    it("key:eq single with 'eq' key")             { expect_tag_success(inventory, "filter[name][eq]=#{tag_1.name}", tag_1) }
+    it("key:eq array of values with 'eq' key")    { expect_tag_success(inventory, "filter[name][eq][]=#{tag_1.name}&filter[name][eq][]=#{tag_2.name}", tag_1, tag_2) }
 
-    it("key:contains single")                     { expect_tag_success(container_node, "filter[name][contains]=a", tag_1, tag_3) }
-    it("key:contains array")                      { expect_tag_success(container_node, "filter[name][contains][]=a&filter[name][contains][]=b", tag_3) }
+    it("key:contains single")                     { expect_tag_success(inventory, "filter[name][contains]=a", tag_1, tag_3) }
+    it("key:contains array")                      { expect_tag_success(inventory, "filter[name][contains][]=a&filter[name][contains][]=b", tag_3) }
 
-    it("key:ends_with")                           { expect_tag_success(container_node, "filter[name][ends_with]=a", tag_1) }
-    it("key:starts_with")                         { expect_tag_success(container_node, "filter[name][starts_with]=b", tag_2) }
+    it("key:ends_with")                           { expect_tag_success(inventory, "filter[name][ends_with]=a", tag_1) }
+    it("key:starts_with")                         { expect_tag_success(inventory, "filter[name][starts_with]=b", tag_2) }
 
     # No nillable columns at this time
-    it("key:nil")                                 { expect_tag_success(container_node, "filter[name][nil]") }
-    it("key:not_nil")                             { expect_tag_success(container_node, "filter[name][not_nil]", tag_1, tag_2, tag_3, tag_4, tag_5, tag_6, tag_7) }
+    it("key:nil")                                 { expect_tag_success(inventory, "filter[name][nil]") }
+    it("key:not_nil")                             { expect_tag_success(inventory, "filter[name][not_nil]", tag_1, tag_2, tag_3, tag_4, tag_5, tag_6, tag_7) }
 
-    it("key:ends_with %")                         { expect_tag_success(container_node, "filter[name][ends_with]=%", tag_5) }
-    it("key:starts_with %")                       { expect_tag_success(container_node, "filter[name][starts_with]=%", tag_6) }
-    it("key:contains %")                          { expect_tag_success(container_node, "filter[name][contains]=e%", tag_7) }
+    it("key:ends_with %")                         { expect_tag_success(inventory, "filter[name][ends_with]=%", tag_5) }
+    it("key:starts_with %")                       { expect_tag_success(inventory, "filter[name][starts_with]=%", tag_6) }
+    it("key:contains %")                          { expect_tag_success(inventory, "filter[name][contains]=e%", tag_7) }
   end
 end

@@ -24,8 +24,8 @@ RSpec.describe("v2 redirects") do
       expect(response.headers["Location"]).to be_nil
     end
 
-    it "direct request doesn't break vms" do
-      get("/api/#{expected_version}/vms", :headers => headers)
+    it "direct request doesn't break service_instances" do
+      get("/api/#{expected_version}/service_instances", :headers => headers)
       expect(response.status).to eq(200)
       expect(response.headers["Location"]).to be_nil
     end

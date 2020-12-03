@@ -37,7 +37,7 @@ class InitTables < ActiveRecord::Migration[5.1]
       t.datetime :source_updated_at
       t.datetime :last_seen_at
 
-      t.bigint :service_credential_type_id, :null => false
+      t.bigint :service_credential_type_id
 
       t.index :archived_at
       t.index :last_seen_at
@@ -262,6 +262,48 @@ class InitTables < ActiveRecord::Migration[5.1]
       t.datetime :last_seen_at, :index => true
       t.references :service_offering, :type => :bigint, :index => false, :null => false, :foreign_key => {:on_delete => :cascade}
       t.index [:service_offering_id, :tag_id], :name => "uniq_index_on_service_offering_id_tag_id", :unique => true
+    end
+
+    create_table :service_instance_service_credentials do |t|
+      t.references :tenant, :index => true, :null => false, :foreign_key => {:on_delete => :cascade}
+      t.references :service_credential, :null => false, :index => false, :foreign_key => {:on_delete => :cascade}
+      t.references :service_instance, :null => false, :index => false, :foreign_key => {:on_delete => :cascade}
+
+      t.timestamps
+
+      t.datetime :last_seen_at
+
+      t.index %i[service_instance_id], :name => :index_service_instance_credentials_on_service_instance_id
+      t.index %i[last_seen_at]
+      t.index %i[service_credential_id service_instance_id], :unique => true, :name => :index_service_instance_credential_id
+    end
+
+    create_table :service_instance_node_service_credentials do |t|
+      t.references :tenant, :index => true, :null => false, :foreign_key => {:on_delete => :cascade}
+      t.references :service_credential, :null => false, :index => false, :foreign_key => {:on_delete => :cascade}
+      t.references :service_instance_node, :null => false, :index => false, :foreign_key => {:on_delete => :cascade}
+
+      t.timestamps
+
+      t.datetime :last_seen_at
+
+      t.index %i[service_instance_node_id], :name => :index_instance_node_credentials_on_service_offering_id
+      t.index %i[last_seen_at]
+      t.index %i[service_credential_id service_instance_node_id], :unique => true, :name => :index_service_instance_node_credential_id
+    end
+
+    create_table :service_offering_node_service_credentials do |t|
+      t.references :tenant, :index => true, :null => false, :foreign_key => {:on_delete => :cascade}
+      t.references :service_credential, :null => false, :index => false, :foreign_key => {:on_delete => :cascade}
+      t.references :service_offering_node, :null => false, :index => false, :foreign_key => {:on_delete => :cascade}
+
+      t.timestamps
+
+      t.datetime :last_seen_at
+
+      t.index %i[service_offering_node_id], :name => :index_offering_node_credentials_on_service_offering_id
+      t.index %i[last_seen_at]
+      t.index %i[service_credential_id service_offering_node_id], :unique => true, :name => :index_service_offering_node_credential_id
     end
 
     create_table :service_offering_service_credentials do |t|

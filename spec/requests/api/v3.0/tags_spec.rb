@@ -16,19 +16,8 @@ RSpec.describe("v3.0 - Tag") do
     "v3x0_test_index_and_subcollections",
     "tags",
     [
-      :container_groups,
-      :container_images,
-      :container_nodes,
-      :container_projects,
-      :container_templates,
-      :ipaddresses,
-      :network_adapters,
-      :networks,
-      :security_groups,
       :service_inventories,
       :service_offerings,
-      :subnets,
-      :vms,
     ],
   )
 end

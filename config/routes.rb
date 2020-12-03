@@ -32,7 +32,9 @@ Rails.application.routes.draw do
         resources :service_credentials, :only => [:index]
         resources :service_instance_nodes, :only => [:index]
       end
-      resources :service_instance_nodes, :only => [:index, :show]
+      resources :service_instance_nodes, :only => [:index, :show] do
+        resources :service_credentials, :only => [:index]
+      end
       resources :service_offering_icons,  :only => [:index, :show] do
         get "icon_data", :to => "service_offering_icons#icon_data"
       end

@@ -8,7 +8,6 @@
 /bundler.d/*
 /config/database.yml
 /coverage/
-/db/schema.rb
 /doc/
 /Gemfile.lock
 /grafana-dashboards/*.json
