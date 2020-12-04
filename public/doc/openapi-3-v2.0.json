@@ -1702,7 +1702,7 @@
         "description": "Returns a Task object",
         "parameters": [
           {
-            "$ref": "#/components/parameters/ID"
+            "$ref": "#/components/parameters/UUID"
           }
         ],
         "responses": {
@@ -1734,7 +1734,7 @@
         "description": "Updates a Task object",
         "parameters": [
           {
-            "$ref": "#/components/parameters/ID"
+            "$ref": "#/components/parameters/UUID"
           }
         ],
         "requestBody": {
@@ -1802,6 +1802,16 @@
         "schema": {
           "type": "string",
           "pattern": "^\\d+$"
+        }
+      },
+      "UUID": {
+        "name": "id",
+        "in": "path",
+        "description": "UUID of task",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "pattern": "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
         }
       },
       "QueryFilter": {
@@ -1970,6 +1980,12 @@
         "type": "string",
         "description": "ID of the resource",
         "pattern": "^\\d+$",
+        "readOnly": true
+      },
+      "UUID": {
+        "type": "string",
+        "description": "UUID of task",
+        "format": "uuid",
         "readOnly": true
       },
       "OrderParametersServiceOffering": {
@@ -2739,7 +2755,7 @@
             "type": "string"
           },
           "id": {
-            "$ref": "#/components/schemas/ID"
+            "$ref": "#/components/schemas/UUID"
           },
           "name": {
             "example": "Order Service Plan",

@@ -9,6 +9,6 @@ def paginated_response(count, data)
       "first" => a_string_including("offset=0"),
       "last"  => a_string_including("offset=")
     ),
-    "data"  => data
+    "data"  => match_array(data)
   }
 end
