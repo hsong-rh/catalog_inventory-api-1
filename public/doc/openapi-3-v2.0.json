@@ -2756,6 +2756,11 @@
             "title": "Status",
             "type": "string"
           },
+          "message": {
+            "example": "received message starting inventory collection",
+            "title": "Message",
+            "type": "string"
+          },
           "updated_at": {
             "format": "date-time",
             "readOnly": true,

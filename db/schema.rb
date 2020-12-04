@@ -349,6 +349,7 @@ ActiveRecord::Schema.define(version: 0) do
     t.string "name"
     t.string "status"
     t.string "state"
+    t.string "message"
     t.jsonb "context"
     t.jsonb "result"
     t.datetime "completed_at"

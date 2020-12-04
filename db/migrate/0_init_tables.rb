@@ -331,6 +331,7 @@ class InitTables < ActiveRecord::Migration[5.1]
       t.string :name
       t.string :status
       t.string :state
+      t.string :message
       t.jsonb :context
       t.jsonb :result
       t.datetime :completed_at
