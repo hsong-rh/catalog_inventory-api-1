@@ -1996,10 +1996,6 @@
             "type": "object",
             "description": "JSON object with provisioning parameters"
           },
-          "provider_control_parameters": {
-            "type": "object",
-            "description": "The provider specific parameters needed to provision this service. This might include namespaces, special keys"
-          },
           "service_plan_id": {
             "$ref": "#/components/schemas/ID"
           }
@@ -2739,12 +2735,17 @@
             "format": "date-time",
             "type": "string"
           },
+          "input": {
+            "example": "Task payload input content",
+            "title": "Content",
+            "type": "object"
+          },
           "context": {
-            "example": "Extra information about this task, e.g. new inventory items created by this task",
+            "example": "Extra information about this task, e.g. x_rh_identity",
             "title": "Context",
             "type": "object"
           },
-          "result": {
+          "output": {
             "example": "Result of Task Execution",
             "title": "Result",
             "type": "object"
@@ -2770,6 +2771,11 @@
           "status": {
             "example": "Error",
             "title": "Status",
+            "type": "string"
+          },
+          "type": {
+            "example": "MqttClientTask",
+            "title": "Type",
             "type": "string"
           },
           "message": {

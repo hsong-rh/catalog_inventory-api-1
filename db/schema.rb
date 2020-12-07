@@ -352,8 +352,10 @@ ActiveRecord::Schema.define(version: 2020_12_04_024650) do
     t.string "status"
     t.string "state"
     t.string "message"
+    t.string "type"
+    t.jsonb "input"
+    t.jsonb "output"
     t.jsonb "context"
-    t.jsonb "result"
     t.datetime "completed_at"
     t.datetime "archived_at"
     t.datetime "created_at", null: false

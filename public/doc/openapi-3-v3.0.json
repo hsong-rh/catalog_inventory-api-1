@@ -3223,11 +3223,16 @@
             "type": "string"
           },
           "context": {
-            "example": "Extra information about this task, e.g. new inventory items created by this task",
+            "example": "Extra information about this task, e.g. x-rh-identity",
             "title": "Context",
             "type": "object"
           },
-          "result": {
+          "input": {
+            "example": "Task payload input content",
+            "title": "Content",
+            "type": "object"
+          },
+          "output": {
             "example": "Result of Task Execution",
             "title": "Result",
             "type": "object"
@@ -3256,6 +3261,11 @@
           "status": {
             "example": "Error",
             "title": "Status",
+            "type": "string"
+          },
+          "type": {
+            "example": "MqttClientTask",
+            "title": "Type",
             "type": "string"
           },
           "message": {
