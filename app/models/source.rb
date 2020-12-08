@@ -26,5 +26,4 @@ class Source < ApplicationRecord
   has_many :tasks
 
   ALLOWED_REFRESH_STATUS_VALUES = ["deployed", "quota_limited"].freeze
-  validates :refresh_status, :allow_nil => true, :inclusion => {:in => ALLOWED_REFRESH_STATUS_VALUES, :message => "%{value} is not included in #{ALLOWED_REFRESH_STATUS_VALUES}"}
 end
